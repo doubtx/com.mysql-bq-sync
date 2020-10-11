@@ -1,0 +1,19 @@
+{
+  "name": "com.mysql-bq-sync",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/bigquery": "^5.3.0",
+    "@google-cloud/secret-manager": "^3.2.0",
+    "@google-cloud/storage": "^5.3.0",
+    "axios": "^0.20.0",
+    "mysql": "^2.18.1",
+    "promise-mysql": "^4.1.3"
+  }
+}
