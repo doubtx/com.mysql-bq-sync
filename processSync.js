@@ -5,7 +5,6 @@ const { Storage } = require('@google-cloud/storage');
 const { BigQuery } = require('@google-cloud/bigquery');
 const secrets = new SecretManagerServiceClient();
 const storage = new Storage().bucket("mysql-sync-queries");
-const bq = (new BigQuery()).dataset("Moin_Sync_MySQL")
 
 async function accessSecretVersion(name) {
     const [version] = await secrets.accessSecretVersion({ name: name });
@@ -13,9 +12,10 @@ async function accessSecretVersion(name) {
 }
 
 exports.processSyncHandler = async (message, context) => {
-    let { credentialsKey, queryPath, targetTable, writeDisposition } = JSON.parse(Buffer.from(message.data, 'base64').toString())
+    let { credentialsKey, queryPath, targetTable, writeDisposition, targetDataset } = JSON.parse(Buffer.from(message.data, 'base64').toString())
     let credentials = await accessSecretVersion(`projects/265066643162/secrets/${credentialsKey}/versions/latest`)
 
+    let bq = (new BigQuery()).dataset(targetDataset || "Moin_Sync_MySQL")
     console.log(`Syncing query: ${queryPath} to table ${targetTable}: Connecting to source`)
     let mysqlConnection = await mysql.createConnection(JSON.parse(credentials));
     let gcsData = await new Storage().bucket("mysql-sync-queries").file(queryPath).download();
@@ -39,7 +39,4 @@ exports.processSyncHandler = async (message, context) => {
     })
 
     mysqlConnection.destroy()
-
-
-
 };
